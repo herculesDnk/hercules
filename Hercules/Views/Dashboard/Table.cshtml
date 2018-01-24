@@ -1,0 +1,178 @@
+﻿
+@{
+    ViewBag.Title = "Table";
+}
+
+@section styleTable
+{
+    <!-- DATA TABLES -->
+    <link href="~/Content/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <!-- Theme style -->
+    <link href="~/Content/AdminLTE.css" rel="stylesheet" type="text/css" />
+
+}
+
+<h2>Index</h2>
+
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Data Table With Full Features</h3>
+    </div><!-- /.box-header -->
+    <div class="box-body table-responsive">
+        <table id="datatable-buttons" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Address</th>
+                    <th>FriendlyName</th>
+                    <th>LastCallIn</th>
+                    <th>LoggerSMSNumber</th>
+                    <th>LoggerSerialNumber</th>
+                    <th>LoggerType</th>
+                    <th>adsa</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>ID</th>
+                    <th>Address</th>
+                    <th>FriendlyName</th>
+                    <th>LastCallIn</th>
+                    <th>LoggerSMSNumber</th>
+                    <th>LoggerSerialNumber</th>
+                    <th>LoggerType</th>
+                    <th>dasd</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->
+<!-- page script -->
+
+
+
+
+
+@section jsTable
+{
+
+
+    <!-- AdminLTE App -->
+    <script src="~/Scripts/app.js" type="text/javascript"></script>
+    <!-- DataTables -->
+    <script src="~/Scripts/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script src="~/Scripts/datatables.net-bs/js/datatables/dataTables.buttons.min.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/datatables/buttons.bootstrap.min.js"></script>
+
+    <script src="~/Scripts/datatables.net-bs/js/datatables/jszip.min.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/datatables/pdfmake.min.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/datatables/vfs_fonts.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/datatables/buttons.html5.min.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/datatables/buttons.print.min.js"></script>
+    <script src="~/Scripts/datatables.net-bs/js/datatables/dataTables.keyTable.min.js"></script>
+    <!--Librerias moment-->
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
+
+
+    <script type="text/javascript">
+        var editor;
+        $(document).ready(function () {
+            //// Edit record
+            $('#datatable-buttons').on('click', 'a.editor_edit', function () {
+
+                alert(id);
+
+            });
+
+            // Delete a record
+            $('#datatable-buttons').on('click', 'a.editor_remove', function (e) {
+                e.preventDefault();
+
+                editor.remove($(this).closest('tr'), {
+                    title: 'Delete record',
+                    message: 'Are you sure you wish to remove this record?',
+                    buttons: 'Delete'
+                });
+            });
+
+
+           var table = $('#datatable-buttons').DataTable({
+                dom: "Bfrtip",
+                buttons: [{
+                    extend: "csv",
+                    className: "btn-sm"
+                }, {
+                    extend: "excel",
+                    className: "btn-sm"
+                }, {
+                    extend: "pdf",
+                    className: "btn-sm"
+                }],
+                responsive: !0,
+                "language": {
+                    "search": "Buscar",
+                    "info": "Mostrando paguina _PAGE_ de _PAGES_ de un total de _MAX_ confirmados",
+                    "infoEmpty": "Mostrando 0 registros de un total de _MAX_ confirmados",
+                    "infoFiltered": "(filtrando _MAX_ registro totales)",
+                    "paginate": {
+                        "previous": "anterior",
+                        "next": "siguiente"
+                    },
+                    "zeroRecords": "No exiten registros"
+                },"ajax": {
+                 "url": '@Url.Action("jsonTable", "Dashboard")',
+                 "dataType": "json",
+                 "dataSrc": "",
+                },
+                "columns": [
+                    {
+                        "data": "ID", "render": function  (data) {
+                            var id = data;
+                            if (id == null || id == 0) {
+                                alert('El id no es correcto');
+                            } else {
+                                return id;
+                            }
+                        }
+                    },
+                    {
+                        "data": "Address"
+                    },
+                    {
+                        "data": "friendlyname"
+                    },
+                    {
+                        "data": "lastCallIn", "render": function (data) {
+                            var fecha = data;
+                            if (fecha == null) {
+                                return "Sin fecha";
+                            }
+                            else {
+                                var fechaSubstring = fecha.substring(6);
+                                var fechaParseint = parseInt(fechaSubstring);
+                                var date = new Date(fechaParseint);
+
+                                return moment(date).format("YYYY-MM-DD hh:mm:ss");
+                            }
+                        }
+                    },
+                    { "data": "LoggerSMSNumber" },
+                    { "data": "LoggerSerialNumber" },
+                    { "data": "LoggerType" },
+                    {
+                        "data": "ID", "render": function (data) {
+                            var id = data;
+
+                            return '<a href="@Url.Action("Detalles", "Dashboard")'+'?IDs='+id+'" class="editor_edit btn btn-primary">Ver</a>';
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+}
+

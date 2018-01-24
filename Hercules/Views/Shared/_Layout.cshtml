@@ -7,9 +7,19 @@
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
+    <!--Boostrap-->
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css">
+    <!-- font Awesome -->
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <!-- Ionicons -->
+    <link href="~/Content/ionicons.min.css" rel="stylesheet" />
     @RenderSection("myTree", false)
     @RenderSection("Styles", false)
+    @RenderSection("styleTable", false)
+    <!--JQuery-->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -42,7 +52,8 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-
     @RenderSection("jsCode", false)
+    @RenderSection("jsTable", false)
+    @RenderSection("jsGraph", false)
 </body>
 </html>
