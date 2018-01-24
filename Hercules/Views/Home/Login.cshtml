@@ -1,0 +1,137 @@
+﻿@model Hercules.Models.users
+@{
+    
+    ViewBag.Title = "DNK Water";
+    Layout = null;
+}
+
+<div class="bg">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="login-block">
+            <div class="logo"></div>
+            <h1>Bienvenido</h1>
+
+            @Html.TextBoxFor(model => model.Username, new { id = "Username", name = "Username", placeholder = "Usuario", })
+            <p>@Html.ValidationMessageFor(model => model.Username)</p>
+
+            @Html.PasswordFor(model => model.Password, new { id = "Password", name = "Password", placeholder = "Contraseña" })
+            <p>@Html.ValidationMessageFor(model => model.Password)</p>
+
+            <text>Recordar usuario</text> @Html.CheckBox("chkUserSession", false, new { id = "Checkbox", name = "Checkbox" })
+
+            <button>Ingresar</button>
+            <h3>@Html.ValidationSummary(true)</h3>
+        </div>
+    }
+</div>
+
+<style>
+
+    .bg {
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        background: url("../../img/background.svg") no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    .login-block {
+        width: 350px;
+        padding-top: 20px;
+        border-radius: 10px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        width: 320px;
+        height: 193px;
+        max-width: 320px;
+        max-height: 193px;
+        background: url("../../img/dnklogo.jpg") no-repeat;
+        margin: 20px auto;
+    }
+
+    .login-block h1 {
+        text-align: center;
+        color: #5a5b5d;
+        font-size: 18px;
+        font-family: Montserrat;
+        margin-bottom: 15px;
+    }
+
+    .login-block input {
+        width: 100%;
+        height: 42px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: 2px solid #ccc;
+        margin-bottom: 10px;
+        font-size: 14px;
+        font-family: Montserrat;
+        padding: 0 0 0 50px;
+    }
+
+        .login-block input#username {
+            background: #fff url("../../img/login_username.png") 20px top no-repeat;
+            background-size: 16px 80px;
+        }
+
+            .login-block input#username:focus {
+                background: #fff url("../../img/login_username.png") 20px bottom no-repeat;
+                background-size: 16px 80px;
+            }
+
+        .login-block input#password {
+            background: #fff url("../../img/login_password.png") 20px top no-repeat;
+            background-size: 16px 80px;
+        }
+
+            .login-block input#password:focus {
+                background: #fff url("../../img/login_password.png") 20px bottom no-repeat;
+                background-size: 16px 80px;
+            }
+
+    .login-block p, h3 {
+        font-size: 12px;
+        font-family: Montserrat;
+        text-align: center;
+        list-style-type: none;
+        padding-bottom: 15px;
+        margin: 0 auto;
+        color: #ff0000;
+    }
+
+    .login-block input#Checkbox {
+        margin-left: 65px;
+        margin-top: -30px;
+    }
+
+    .login-block text {
+        color: #5a5b5d;
+        font-size: 16px;
+        font-family: Montserrat;
+        padding-top: 10px;
+        padding-left: 85px;
+        margin: 0 auto;
+    }
+
+    .login-block button {
+        width: 100%;
+        height: 40px;
+        background: #2e99d1;
+        border-radius: 5px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-family: Montserrat;
+        outline: none;
+        cursor: pointer;
+    }
+
+        .login-block button:hover {
+            color: #fff;
+            background: #73c7f3;
+        }
+</style>

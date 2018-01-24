@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+@section Styles{
+    <!--jsTree-->
+    <link rel="stylesheet" href="~/Scripts/vakata-jstree-0097fab/dist/themes/default/style.min.css" />
+}
+
+<h2>Index</h2>
+
+@{
+    try
+    {
+        Hercules.Models.accounts accountId = (Hercules.Models.accounts)Session["AccountId"];
+        List<Hercules.Models.accounts> accountsList = (List<Hercules.Models.accounts>)Session["AccountsList"];
+        List<Hercules.Models.sites> sitesList = (List<Hercules.Models.sites>)Session["SitesList"];
+
+        <!--jsTree-->
+        <div id="jstree">
+            <ul>
+                <li class="node_accountsID" data-jstree={"type":"node_accountsID"}>
+                    @accountId.AccountName
+                    <ul>
+                        @foreach (var account in accountsList)
+                        {
+                            <li class="node_accountsName" data-jstree={"type":"node_accountsName"}>
+                                @account.AccountName
+                                <ul>
+                                    @foreach (var site in sitesList)
+                                    {
+                                        if (account.ID == site.OwnerAccount)
+                                        {
+                                            <li id=@site.ID class="node_sites" data-jstree={"type":"node_sites"}>
+                                                @site.Address
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!--/jsTree-->
+
+        <!--Table-->
+        <!--/Table-->
+    }
+    catch
+    {
+        <p> Error :( </p>
+    }
+}
+
+@section jsCode
+{
+    <!--jsTree-->
+    <script src="~/Scripts/vakata-jstree-0097fab/dist/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $("#jstree").jstree({
+                "core": {
+                    "check_callback": true
+                },
+                "types": {
+                    "node_accountsID": {
+                        "icon": "../../img/node_accountsID.png"
+                    },
+                    "node_accountsName": {
+                        "icon": "../../img/node_accountsName.png"
+                    },
+                    "node_sites": {
+                        "icon": "../../img/node_sites.png"
+                    }
+                },
+                "plugins": ["dnd", "wholerow", "types"]
+
+            }).on("select_node.jstree",
+
+                function (evt, data) {
+                    //Select node event
+                    if (data.node.type == "node_sites") {
+                        var node_id = (data.node.id);
+                        alert(node_id)
+                    }
+                }
+                );;
+        });
+    </script>
+    <!--/jsTree-->
+}
