@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewBag.Title = "Detalles";
+}
+
+<center>
+    <h1>@ViewData["last"]</h1>
+    <h1>@ViewData["sms"]</h1>
+    <h1>latitud : @ViewData["LatEast"]</h1>
+    <h1>longitud : @ViewData["LongNorth"]</h1>
+
+    <div id="map" style="width:500px; height:250px"></div>
+
+
+    <div id="container" style="height: 400px; min-width: 310px"></div>
+</center>
+<script>
+        var latt = @ViewData["LatEast"];
+        var lngg = @ViewData["LongNorth"];
+
+        function initMap() {
+        var coord = { lat: latt, lng: lngg };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: coord
+        });
+        //variable de informacion
+        var infowindow = new google.maps.InfoWindow;
+        // creamos el objeto geodecoder
+        var geocoder = new google.maps.Geocoder();
+
+          //variable de marker
+         var marker = new google.maps.Marker(
+            {
+               position: coord,
+               draggable: false,
+               animation: google.maps.Animation.DROP,
+               map: map,
+               title: "Ubicacion"
+
+             });
+
+        //Animacion de marker
+        marker.addListener('click', function () {
+
+            if (marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+
+            } else {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+         });
+
+
+        geocoder.geocode({ 'latLng': coord }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                var address = results[0]['formatted_address'];
+
+                infowindow.open(map, marker);
+                infowindow.setContent(address);
+            }
+        });
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDT3I4jexwo679g43boojQE8Srf8gsazoU&callback=initMap">
+</script>
+
+@*@section jsGraph
+{
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () { 
+     $(function(){
+        $.ajax({
+            type: 'get',
+            url: '@Url.Action("Detalles", "Dashboard")',
+            datatype: 'json',
+            success: function (data) {
+                var options = {
+                    chart: {
+                        renderTo: 'container',
+                        type: 'compare',
+                        zoomType: 'x',
+                        event: function () {
+                            this.showloading();
+                            this.hideNoData();
+                        }
+                    },
+                    title: {
+
+                    },
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: [{
+                        labels: {
+                            format: '{value} mca',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                        title: {
+                            text: 'Presión (mca)',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                        opposite: false
+                    }, {
+                            title: {
+                                text: 'Caudal (l/s)',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            labels: {
+                                format: '{value} l/s',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            opposite: false,
+                            tickInterval: 3
+                        }, {
+                            title: {
+                                text: 'Presión (mca)',
+                                style: {
+                                    color: Highcharts.getOptions().colors[3]
+                                }
+                            },
+                            labels: {
+                                format: '{value} mca',
+                                style: {
+                                    color: Highcharts.getOptions().colors[3]
+                                }
+                            },
+                            opposite: false
+
+                    }],
+                    series: [{
+                        name: 'Presión',
+                        data: [],
+                        yAxis: 0,
+                        type: 'spline',
+                        marker: {
+                            enable: false,
+                            radius: 3
+                        },
+                        tooltip: {
+                            valueSuffix: ' mca',
+                            valueDecimals: 2
+                        },
+                        shadow: true
+                    }, {
+                        name: 'Caudal',
+                        data: [],
+                        yAxis: 1,
+                        type: 'spline',
+                        marker: {
+                            enabled: false,
+                            radius: 3
+                        },
+                        tooltip: {
+                            valueSuffix: ' l/s',
+                            valueDecimals: 2
+                        },
+                        shadow: true
+                    }, {
+                        name: 'Presión',
+                        data: [],
+                        yAxis: 2,
+                        type: 'spline',
+                        marker: {
+                            enabled: false,
+                            radius: 3
+                        },
+                        tooltip: {
+                            valueSuffix: ' mca',
+                            valueDecimals: 2
+                        },
+                        shadow: true
+                    }],
+                    credits: {
+                        text: 'DNK Water S.p.A.',
+                        href: 'https://www.dnkwater.com'
+                    },
+                    plotOptions: {
+                        series: {
+                            compare: 'percent',
+                            showInNavigator: true
+                        }
+                    },
+                    scrollbar: {
+                        enabled: false
+                    },
+                    navigator: {
+                        enabled: true
+                    },
+                    tooltip: {
+                        valueDecimals: 2
+                    },
+                    rangeSelector: {
+                        enabled: true,
+                        selected: 1
+                    },
+                }
+
+                var pres1 = [];
+                var caudal = [];
+                var pres2 = [];
+
+                $.each(JSON.parse(data), function (index, element) {
+                    var nombre = element.loggtype;
+                    options.title = { text: nombre };
+                    var pressure1 = element.c1pressure;
+                    pressure1 = pressure1 * 0.001;
+                    var cau = element.c2flow;
+                    cau = cau * 100;
+                    var pressure3 = element.c3pressure;
+                    pressure3 = pressure3 * 0.001;
+
+                    pres1.push([element.datetime, pressure1]);
+                    caudal.push([element.datetime, cau]);
+                    pres2.push([element.datetime, pressure3]);
+                });
+
+                options.series[0].data = pres1;
+                options.series[1].data = caudal;
+                options.series[2].data = pres2;
+                $('#container').highcharts(options);
+            }
+        });
+            })
+        });
+    </script>
+
+}*@
+
+
