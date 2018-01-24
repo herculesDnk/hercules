@@ -66,7 +66,6 @@ namespace Hercules.Models
             {
                 return null;
             }
-
         }
 
         private List<int> GetIdSitesList(int userId)

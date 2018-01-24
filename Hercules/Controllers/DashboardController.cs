@@ -1,9 +1,12 @@
 ﻿using Hercules.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Web.UI;
 
 namespace Hercules.Controllers
 {
@@ -134,6 +137,22 @@ namespace Hercules.Controllers
                 Expires = DateTime.Now.AddYears(1)
             };
             Response.Cookies.Add(userIdCookie);
+        }
+
+        public ActionResult GetJSON()
+        {
+            hwmdbEntities db = new hwmdbEntities();
+
+            var query = (from dbs in db.sites
+                         join dbl in db.loggers
+                         on dbs.LoggerID equals dbl.ID
+                         select new
+                         {
+                             dbl.ID,
+                             dbs.Address
+                         });
+
+            return Json(query, JsonRequestBehavior.AllowGet);
         }
     }
 }

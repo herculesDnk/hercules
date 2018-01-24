@@ -3,9 +3,29 @@
 }
 
 @section Styles{
-    <!--hola-->
     <!--jsTree-->
     <link rel="stylesheet" href="~/Scripts/vakata-jstree-0097fab/dist/themes/default/style.min.css" />
+    <!--DataTable-->
+    <link rel="stylesheet" type="text/css" href="~/Scripts/DataTables-1.10.16/datatables.min.css" />
+    <script src="~/Scripts/app.js" type="text/javascript"></script>
+    <!-- DataTables -->
+    <script src="~/Scripts/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/dataTables.bootstrap.min.js"></script>
+
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/dataTables.buttons.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/buttons.bootstrap.min.js"></script>
+
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/jszip.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/pdfmake.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/vfs_fonts.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/buttons.html5.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/buttons.print.min.js"></script>
+    <script src="~/Scripts/DataTables-1.10.16/js/datatables/dataTables.keyTable.min.js"></script>
+
+    <!--Librerias moment-->
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
+
 }
 
 <h2>Index</h2>
@@ -18,7 +38,7 @@
         List<Hercules.Models.sites> sitesList = (List<Hercules.Models.sites>)Session["SitesList"];
 
         <!--jsTree-->
-        <div id="jstree">
+        <div class="jstree">
             <ul>
                 <li class="node_accountsID" data-jstree={"type":"node_accountsID"}>
                     @accountId.AccountName
@@ -32,7 +52,7 @@
                                     {
                                         if (account.ID == site.OwnerAccount)
                                         {
-                                            <li id=@site.ID class="node_sites" data-jstree={"type":"node_sites"}>
+                                            <li id="@site.ID" class="node_sites" data-jstree={"type":"node_sites"}>
                                                 @site.Address
                                             </li>
                                         }
@@ -46,8 +66,31 @@
         </div>
         <!--/jsTree-->
 
-        <!--Table-->
-        <!--/Table-->
+        <!--DataTable-->
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Data Table With Full Features</h3>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive">
+                <table id="datatable-buttons" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Address</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Address</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div><!-- /.box-body -->
+        </div><!-- /.box -->
+        <!--/DataTable-->
     }
     catch
     {
@@ -59,9 +102,10 @@
 {
     <!--jsTree-->
     <script src="~/Scripts/vakata-jstree-0097fab/dist/jstree.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="~/DataTables-1.10.16/datatables.js"></script>
     <script>
         $(function () {
-            $("#jstree").jstree({
+            $(".jstree").jstree({
                 "core": {
                     "check_callback": true
                 },
@@ -83,12 +127,91 @@
                 function (evt, data) {
                     //Select node event
                     if (data.node.type == "node_sites") {
-                        var node_id = (data.node.id);
-                        alert(node_id)
-                    }
-                }
-                );;
+
+                        $(document).ready(function () {
+                            $.ajax({
+                                url: '@Url.Action("GetJSON", "Dashboard")',
+                                type: "GET",
+                                success: function (data) {
+                                    $.each(data, function (i, obj) {
+                                        //aQUI
+                                    })
+                                }
+                            })
+                        })
+                    };
+                });
         });
     </script>
     <!--/jsTree-->
+
+    <script type="text/javascript">
+        var editor;
+        $(document).ready(function () {
+            //// Edit record
+            $('#datatable-buttons').on('click', 'a.editor_edit', function () {
+                alert(id);
+            });
+
+            // Delete a record
+            $('#datatable-buttons').on('click', 'a.editor_remove', function (e) {
+                e.preventDefault();
+
+                editor.remove($(this).closest('tr'), {
+                    title: 'Delete record',
+                    message: 'Are you sure you wish to remove this record?',
+                    buttons: 'Delete'
+                });
+            });
+
+           var table = $('#datatable-buttons').DataTable({
+                dom: "Bfrtip",
+                buttons: [{
+                    extend: "csv",
+                    className: "btn-sm"
+                }, {
+                    extend: "excel",
+                    className: "btn-sm"
+                }, {
+                    extend: "pdf",
+                    className: "btn-sm"
+                }],
+                responsive: !0,
+                "language": {
+                    "search": "Buscar",
+                    "info": "Mostrando paguina _PAGE_ de _PAGES_ de un total de _MAX_ confirmados",
+                    "paginate": {
+                        "previous": "anterior",
+                        "next": "siguiente"
+                    }
+
+                },"ajax": {
+                 "url": '@Url.Action("GetJSON", "Dashboard")',
+                 "dataType": "json",
+                 "dataSrc": "",
+                },
+                "columns": [
+                    {
+                        "data": "ID", "render": function  (data) {
+                            var id = data;
+                            if (id == null || id == 0) {
+                                alert('El id no es correcto');
+                            } else {
+                                return id;
+                            }
+                        }
+                    },
+                    {
+                        "data": "Address"
+                    },
+                    {
+                        "data": "ID", "render": function (data) {
+                            var id = data;
+
+                            return '<a href="@Url.Action("Detalles", "Datagate")'+'?ID='+id+'" class="editor_edit btn btn-primary">Ver</a>';
+                        }
+                    }
+                ]
+            });
+    </script>
 }
